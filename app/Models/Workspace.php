@@ -41,6 +41,14 @@ class Workspace extends Model
         return $this->hasMany(WorkspaceInvitation::class);
     }
 
+    /**
+     * @return HasMany<Project, self>
+     */
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
     // =============================
     // スコープ（絞り込み条件を再利用）
     // =============================

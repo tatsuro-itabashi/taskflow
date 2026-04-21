@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,5 +31,13 @@ Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect']
 
 Route::get('/auth/{provider}/callback', [SocialiteController::class, 'callback'])
     ->name('socialite.callback');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    // ワークスペース配下のプロジェクト（ネストしたリソースルート）
+    Route::resource('workspaces.projects', ProjectController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->shallow();  // 詳細・編集は /projects/{id} で直接アクセス可能にする
+});
 
 require __DIR__.'/auth.php';

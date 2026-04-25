@@ -11,6 +11,7 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * User model
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Storage;
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;  // HasApiTokens を追加
 
     protected $appends = ['avatar_url'];
 

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\WorkspaceInvitationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,6 +48,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ワークスペース配下のプロジェクト（ネストしたリソースルート）
     Route::resource('workspaces.projects', ProjectController::class)
         ->only(['index', 'store', 'update', 'destroy']);
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/workspaces/{workspace}/invitations', [WorkspaceInvitationController::class, 'store'])
+        ->name('workspaces.invitations.store');
 });
 
 require __DIR__.'/auth.php';

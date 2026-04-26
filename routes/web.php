@@ -46,8 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ワークスペース配下のプロジェクト（ネストしたリソースルート）
     Route::resource('workspaces.projects', ProjectController::class)
-        ->only(['index', 'store', 'update', 'destroy'])
-        ->shallow();  // 詳細・編集は /projects/{id} で直接アクセス可能にする
+        ->only(['index', 'store', 'update', 'destroy']);
 });
 
 require __DIR__.'/auth.php';

@@ -31,7 +31,7 @@ class TaskController extends Controller
     /**
      * タスクを作成する
      */
-    public function store(Request $request, Project $project): TaskResource
+    public function store(Request $request, Project $project): JsonResponse
     {
         $validated = $request->validate([
             'title'       => ['required', 'string', 'max:255'],
@@ -48,7 +48,9 @@ class TaskController extends Controller
             'position'   => $project->tasks()->max('position') + 1,
         ]);
 
-        return new TaskResource($task->load('assignee'));
+        return (new TaskResource($task->load('assignee')))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**

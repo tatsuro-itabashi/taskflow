@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\TaskCreated;
+use App\Events\TaskDeleted;
+use App\Events\TaskUpdated;
+
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
@@ -48,6 +52,9 @@ class TaskController extends Controller
             'position'   => $project->tasks()->max('position') + 1,
         ]);
 
+        // イベントを発火（Listener が自動で動く）
+        TaskCreated::dispatch($task, $request->user());
+
         return (new TaskResource($task->load('assignee')))
             ->response()
             ->setStatusCode(201);
@@ -80,6 +87,22 @@ class TaskController extends Controller
 
         $task->update($validated);
 
+        // 変更前の値を記録
+        $oldValues = $task->only(array_keys($validated));
+        $task->update($validated);
+        $newValues = $task->fresh()->only(array_keys($validated));
+
+        // 実際に変わったフィールドだけ記録
+        $changes = [];
+        foreach ($newValues as $key => $new) {
+            if ($oldValues[$key] != $new) {
+                $changes['old'][$key] = $oldValues[$key];
+                $changes['new'][$key] = $new;
+            }
+        }
+
+        TaskUpdated::dispatch($task->fresh(), $request->user(), $changes);
+
         return new TaskResource($task->fresh()->load('assignee'));
     }
 
@@ -89,6 +112,12 @@ class TaskController extends Controller
     public function destroy(Project $project, Task $task): JsonResponse
     {
         $task->delete();
+
+        $deletedTask = clone $task; // 削除前に情報を保持
+        $task->delete();
+
+        TaskDeleted::dispatch($deletedTask, auth()->user());
+
         return response()->json(['message' => 'タスクを削除しました']);
     }
 }

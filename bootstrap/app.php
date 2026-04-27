@@ -22,6 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // API の Rate Limiting 設定
         $middleware->throttleApi('api'); // Laravel 12 のデフォルト設定（60回/分）
     })
+    ->withEvents(discover: [
+        __DIR__.'/../app/Listeners',
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

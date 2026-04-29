@@ -6,11 +6,13 @@ use App\Events\TaskCreated;
 use App\Events\TaskDeleted;
 use App\Events\TaskUpdated;
 use App\Events\TaskStatusChanged;
-
+use App\Notifications\AssignedToTask;
+use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -90,6 +92,7 @@ class TaskController extends Controller
 
         $task->update($validated);
 
+        // Day 9：タスク更新時にイベントを発火
         // 変更前後の差分
         $changes = [
             'old' => array_intersect_key($old, $validated),
@@ -97,9 +100,23 @@ class TaskController extends Controller
         ];
         TaskUpdated::dispatch($task, $request->user(), $changes);
 
+        // Day 10:ステータスが変わった場合にイベントを発火
         // ステータスが変わった場合のみブロードキャスト
         if (isset($validated['status']) && $old['status'] !== $validated['status']) {
             TaskStatusChanged::dispatch($task, $request->user(), $old['status']);
+        }
+
+        // Day 11：担当者が変更された場合に通知を送る
+        if (isset($validated['assignee_id'])
+            && $validated['assignee_id'] !== $old['assignee_id']
+            && $validated['assignee_id'] !== null
+        ) {
+            $assignee = User::query()->find($validated['assignee_id']);
+
+            // 自分自身をアサインした場合は通知しない
+            if ($assignee && $assignee->id !== $request->user()->id) {
+                Notification::send($assignee, new AssignedToTask($task, $request->user()));
+            }
         }
 
         return new TaskResource($task);

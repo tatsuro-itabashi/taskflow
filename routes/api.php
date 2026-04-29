@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Api\TaskController;
 use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\NotificationController;
 
 // 認証確認エンドポイント
 Route::get('/user', function (Request $request) {
@@ -19,6 +20,10 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:api'])->group(functio
     // プロジェクト配下のタスク CRUD
     Route::apiResource('projects.tasks', TaskController::class);
 
+    // 通知
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead']);
 });
 
 // トークン発行
@@ -28,7 +33,7 @@ Route::post('/tokens/create', function (Request $request) {
         'password' => 'required',
     ]);
 
-    $user = User::where('email', $request->email)->first();
+    $user = User::query()->where('email', $request->email)->first();
 
     if (! $user || ! Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([

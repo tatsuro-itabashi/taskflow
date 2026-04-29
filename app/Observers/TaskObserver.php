@@ -14,7 +14,8 @@ class TaskObserver
     {
         // position が未設定なら自動で末尾に配置
         if (! $task->position) {
-            $task->position = Task::where('project_id', $task->project_id)
+            $task->position = Task::query()
+                ->where('project_id', $task->project_id)
                 ->max('position') + 1;
         }
     }

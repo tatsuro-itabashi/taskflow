@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ワークスペース配下のプロジェクト（ネストしたリソースルート）
     Route::resource('workspaces.projects', ProjectController::class)
-        ->only(['index', 'store', 'update', 'destroy']);
+        ->only(['index', 'show', 'store', 'update', 'destroy']);
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

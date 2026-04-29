@@ -60,9 +60,23 @@ class ProjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Project $project)
+    public function show(Workspace $workspace, Project $project): Response
     {
-        //
+        $this->authorize('view', $project);
+
+        $tasks = $project->tasks()
+            ->with('assignee')
+            ->orderBy('position')
+            ->get(['id', 'title', 'status', 'priority', 'position', 'assignee_id']);
+
+        return Inertia::render('Projects/Show', [
+            'project' => [
+                'id'           => $project->id,
+                'name'         => $project->name,
+                'workspace_id' => $project->workspace_id,
+            ],
+            'tasks' => $tasks,
+        ]);
     }
 
     /**
@@ -94,7 +108,7 @@ class ProjectController extends Controller
     {
         $this->authorize('delete', $project);
 
-        $project->delete();
+        Project::destroy($project->getKey());
 
         return redirect()
             ->route('workspaces.projects.index', $workspace)

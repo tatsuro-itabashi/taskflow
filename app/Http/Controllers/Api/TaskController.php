@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\TaskCreated;
 use App\Events\TaskDeleted;
 use App\Events\TaskUpdated;
+use App\Events\TaskStatusChanged;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskResource;
@@ -75,48 +76,44 @@ class TaskController extends Controller
      */
     public function update(Request $request, Project $project, Task $task): TaskResource
     {
+        $old = $task->getOriginal(); // 変更前の値を保持
+
         $validated = $request->validate([
             'title'       => ['sometimes', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'description' => ['sometimes', 'nullable', 'string'],
             'status'      => ['sometimes', 'in:todo,in_progress,in_review,done'],
             'priority'    => ['sometimes', 'in:low,medium,high,urgent'],
-            'due_date'    => ['nullable', 'date'],
-            'assignee_id' => ['nullable', 'exists:users,id'],
+            'due_date'    => ['sometimes', 'nullable', 'date'],
+            'assignee_id' => ['sometimes', 'nullable', 'exists:users,id'],
             'position'    => ['sometimes', 'integer', 'min:0'],
         ]);
 
         $task->update($validated);
 
-        // 変更前の値を記録
-        $oldValues = $task->only(array_keys($validated));
-        $task->update($validated);
-        $newValues = $task->fresh()->only(array_keys($validated));
+        // 変更前後の差分
+        $changes = [
+            'old' => array_intersect_key($old, $validated),
+            'new' => $validated,
+        ];
+        TaskUpdated::dispatch($task, $request->user(), $changes);
 
-        // 実際に変わったフィールドだけ記録
-        $changes = [];
-        foreach ($newValues as $key => $new) {
-            if ($oldValues[$key] != $new) {
-                $changes['old'][$key] = $oldValues[$key];
-                $changes['new'][$key] = $new;
-            }
+        // ステータスが変わった場合のみブロードキャスト
+        if (isset($validated['status']) && $old['status'] !== $validated['status']) {
+            TaskStatusChanged::dispatch($task, $request->user(), $old['status']);
         }
 
-        TaskUpdated::dispatch($task->fresh(), $request->user(), $changes);
-
-        return new TaskResource($task->fresh()->load('assignee'));
+        return new TaskResource($task);
     }
 
     /**
      * タスクを削除する
      */
-    public function destroy(Project $project, Task $task): JsonResponse
+    public function destroy(Request $request, Project $project, Task $task): JsonResponse
     {
-        $task->delete();
-
         $deletedTask = clone $task; // 削除前に情報を保持
-        $task->delete();
+        Task::destroy($task->getKey());
 
-        TaskDeleted::dispatch($deletedTask, auth()->user());
+        TaskDeleted::dispatch($deletedTask, $request->user());
 
         return response()->json(['message' => 'タスクを削除しました']);
     }

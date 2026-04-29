@@ -18,6 +18,12 @@ class ProjectPolicy
      */
     private function getRole(User $user, Workspace $workspace): ?string
     {
+        // workspace の owner は常に 'owner' として扱う
+        // （workspace_user に登録されていない場合もあるため）
+        if ($workspace->owner_id === $user->id) {
+            return 'owner';
+        }
+
         return $workspace->members()
             ->where('user_id', $user->id)
             ->value('workspace_user.role'); // pivot のカラムを直接取得
@@ -34,11 +40,11 @@ class ProjectPolicy
     }
 
     /**
-     * Determine whether the user can view the model.
+     * プロジェクトを閲覧できるか（ワークスペースのメンバーなら全員OK）
      */
     public function view(User $user, Project $project): bool
     {
-        return false;
+        return $this->getRole($user, $project->workspace) !== null;
     }
 
     /**

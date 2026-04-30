@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Task;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class TaskObserver
 {
@@ -26,6 +27,8 @@ class TaskObserver
     public function created(Task $task): void
     {
         Log::info("Task created: [{$task->id}] {$task->title}");
+        // タスクが追加されたらワークスペースの統計キャッシュをクリア
+        Cache::forget("workspace.{$task->project->workspace_id}.stats");
     }
 
     /**
@@ -34,6 +37,10 @@ class TaskObserver
     public function updated(Task $task): void
     {
         // status が done になった場合の処理などをここに書ける
+        // ステータスが変わったら統計キャッシュをクリア
+        if ($task->wasChanged('status')) {
+            Cache::forget("workspace.{$task->project->workspace_id}.stats");
+        }
     }
 
     /**
@@ -42,6 +49,7 @@ class TaskObserver
     public function deleted(Task $task): void
     {
         Log::info("Task deleted: [{$task->id}] {$task->title}");
+        Cache::forget("workspace.{$task->project->workspace_id}.stats");
     }
 
     /**

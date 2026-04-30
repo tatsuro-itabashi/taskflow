@@ -22,7 +22,7 @@ class ProjectController extends Controller
 
         $projects = $workspace->projects()
             ->with('creator')           // N+1対策
-            // ->withCount('tasks')        // ← Day5で追加予定（今は削除OK）
+            ->withCount('tasks')        // N+1対策
             ->latest()
             ->get();
 

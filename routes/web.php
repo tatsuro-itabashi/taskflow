@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WorkspaceInvitationController;
+use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -19,9 +20,14 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+// 既存の dashboard ルートを差し替え
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

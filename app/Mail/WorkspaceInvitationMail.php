@@ -36,9 +36,9 @@ class WorkspaceInvitationMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.workspace.invitation',
             with: [
-                'inviteUrl'     => url("/invitations/{$this->invitation->token}/accept"),
+                'inviteUrl' => url("/invitations/{$this->invitation->token}/accept"),
                 'workspaceName' => $this->workspace->name,
-                'expiresAt'     => $this->invitation->expires_at->format('Y年m月d日'),
+                'expiresAt' => $this->invitation->expires_at->format('Y年m月d日'),
             ],
         );
     }

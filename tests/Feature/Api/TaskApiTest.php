@@ -4,15 +4,15 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Workspace;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
-use function Pest\Laravel\patchJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withToken;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 // テスト用セットアップ：ユーザー・ワークスペース・プロジェクト・APIトークン
 /**
@@ -25,7 +25,7 @@ function setupApi(): array
     $workspace->members()->attach($user->id, ['role' => 'owner']);
     $project = Project::factory()->create([
         'workspace_id' => $workspace->id,
-        'created_by'   => $user->id,
+        'created_by' => $user->id,
     ]);
     $token = $user->createToken('test')->plainTextToken;
 
@@ -40,11 +40,11 @@ test('user can get api token', function () {
     $user = User::factory()->create(['password' => bcrypt('password')]);
 
     postJson('/api/tokens/create', [
-        'email'    => $user->email,
+        'email' => $user->email,
         'password' => 'password',
     ])
-    ->assertStatus(200)
-    ->assertJsonStructure(['token']); // token キーが存在するか
+        ->assertStatus(200)
+        ->assertJsonStructure(['token']); // token キーが存在するか
 });
 
 test('cannot get token with wrong password', function () {
@@ -52,10 +52,10 @@ test('cannot get token with wrong password', function () {
     $user = User::factory()->create();
 
     postJson('/api/tokens/create', [
-        'email'    => $user->email,
+        'email' => $user->email,
         'password' => 'wrong',
     ])
-    ->assertStatus(422); // バリデーションエラー
+        ->assertStatus(422); // バリデーションエラー
 });
 
 // ─────────────────────────────────────────
@@ -90,9 +90,9 @@ test('user can create a task via api', function () {
 
     withToken($token)
         ->postJson("/api/v1/projects/{$project->id}/tasks", [
-            'title'    => 'API テストタスク',
+            'title' => 'API テストタスク',
             'priority' => 'high',
-            'status'   => 'todo',
+            'status' => 'todo',
         ])
         ->assertStatus(201)  // Created
         ->assertJsonPath('data.title', 'API テストタスク')
@@ -121,7 +121,7 @@ test('user can update task status', function () {
     $task = Task::factory()->create([
         'project_id' => $project->id,
         'created_by' => $user->id,
-        'status'     => 'todo',
+        'status' => 'todo',
     ]);
 
     withToken($token)
@@ -132,7 +132,7 @@ test('user can update task status', function () {
         ->assertJsonPath('data.status', 'in_progress');
 
     assertDatabaseHas('tasks', [
-        'id'     => $task->id,
+        'id' => $task->id,
         'status' => 'in_progress',
     ]);
 });

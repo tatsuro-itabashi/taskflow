@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendWorkspaceInvitationJob;
 use App\Models\Workspace;
-use App\Models\WorkspaceInvitation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -18,7 +17,7 @@ class WorkspaceInvitationController extends Controller
     {
         $request->validate([
             'email' => ['required', 'email'],
-            'role'  => ['required', 'in:admin,member'],
+            'role' => ['required', 'in:admin,member'],
         ]);
 
         // すでに招待済みかチェック
@@ -33,9 +32,9 @@ class WorkspaceInvitationController extends Controller
 
         // 招待レコードを作成
         $invitation = $workspace->invitations()->create([
-            'email'      => $request->email,
-            'role'       => $request->role,
-            'token'      => Str::random(32),
+            'email' => $request->email,
+            'role' => $request->role,
+            'token' => Str::random(32),
             'expires_at' => now()->addDays(7),
         ]);
 

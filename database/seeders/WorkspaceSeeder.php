@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Workspace;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class WorkspaceSeeder extends Seeder
@@ -18,8 +17,8 @@ class WorkspaceSeeder extends Seeder
         $owner = User::firstOrCreate(
             ['email' => 'dev@example.com'],
             [
-                'name'              => 'Dev User',
-                'password'          => bcrypt('password'),
+                'name' => 'Dev User',
+                'password' => bcrypt('password'),
                 'email_verified_at' => now(),
             ]
         );

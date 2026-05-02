@@ -1,0 +1,14 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+
+    paths:
+        - app
+
+    # レベル 0（最も緩い）〜 9（最も厳しい）
+    # 最初は 5 からスタートして徐々に上げるのがおすすめ
+    level: 5
+

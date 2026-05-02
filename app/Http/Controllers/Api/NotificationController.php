@@ -19,14 +19,14 @@ class NotificationController extends Controller
             ->take(20)                     // 最大20件
             ->get()
             ->map(fn ($n) => [
-                'id'         => $n->id,
-                'data'       => $n->data,
+                'id' => $n->id,
+                'data' => $n->data,
                 'created_at' => $n->created_at->diffForHumans(), // 例："3分前"
             ]);
 
         return response()->json([
-            'notifications'  => $notifications,
-            'unread_count'   => $request->user()->unreadNotifications()->count(),
+            'notifications' => $notifications,
+            'unread_count' => $request->user()->unreadNotifications()->count(),
         ]);
     }
 

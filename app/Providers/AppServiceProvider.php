@@ -2,19 +2,20 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\ServiceProvider;
-// app/Providers/AppServiceProvider.php の boot() に追記
-use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Http\Request;
 use App\Events\TaskCreated;
-use App\Events\TaskUpdated;
 use App\Events\TaskDeleted;
+// app/Providers/AppServiceProvider.php の boot() に追記
+use App\Events\TaskUpdated;
 use App\Listeners\LogTaskActivity;
 use App\Models\Task;
 use App\Observers\TaskObserver;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ServiceProvider;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**

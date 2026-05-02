@@ -51,6 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'provider_token', // ← OAuth トークンを隠す
     ];
 
     /**
@@ -67,12 +68,18 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     // 自分がオーナーのワークスペース
+    /**
+     * @return HasMany<Workspace, $this>
+     */
     public function ownedWorkspaces(): HasMany
     {
         return $this->hasMany(Workspace::class, 'owner_id');
     }
 
     // 自分が所属するワークスペース（中間テーブル経由）
+    /**
+     * @return BelongsToMany<Workspace, $this>
+     */
     public function workspaces(): BelongsToMany
     {
         return $this->belongsToMany(Workspace::class, 'workspace_user')

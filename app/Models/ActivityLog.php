@@ -20,11 +20,17 @@ class ActivityLog extends Model
         'changes' => 'array', // JSON を自動で配列に変換
     ];
 
+    /**
+     * @return BelongsTo<Workspace, $this>
+     */
     public function workspace(): BelongsTo
     {
         return $this->belongsTo(Workspace::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

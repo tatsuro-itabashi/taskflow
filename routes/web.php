@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WorkspaceInvitationController;
-use App\Http\Controllers\Auth\SocialiteController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,9 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/avatar', [AvatarController::class, 'destroy'])->name('avatar.destroy');
 
     Route::post('/tasks/{task}/attachments', [AttachmentController::class, 'store'])
-    ->name('attachments.store');
+        ->name('attachments.store');
     Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])
-    ->name('attachments.destroy');
+        ->name('attachments.destroy');
 });
 
 Route::get('/auth/{provider}/redirect', [SocialiteController::class, 'redirect'])

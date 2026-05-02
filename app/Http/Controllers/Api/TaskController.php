@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\TaskCreated;
 use App\Events\TaskDeleted;
-use App\Events\TaskUpdated;
 use App\Events\TaskStatusChanged;
-use App\Notifications\AssignedToTask;
-use Illuminate\Support\Facades\Notification;
+use App\Events\TaskUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\AssignedToTask;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Notification;
 
 class TaskController extends Controller
 {
@@ -41,18 +41,18 @@ class TaskController extends Controller
     public function store(Request $request, Project $project): JsonResponse
     {
         $validated = $request->validate([
-            'title'       => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'status'      => ['nullable', 'in:todo,in_progress,in_review,done'],
-            'priority'    => ['nullable', 'in:low,medium,high,urgent'],
-            'due_date'    => ['nullable', 'date'],
+            'status' => ['nullable', 'in:todo,in_progress,in_review,done'],
+            'priority' => ['nullable', 'in:low,medium,high,urgent'],
+            'due_date' => ['nullable', 'date'],
             'assignee_id' => ['nullable', 'exists:users,id'],
         ]);
 
         $task = $project->tasks()->create([
             ...$validated,
             'created_by' => $request->user()->id,
-            'position'   => $project->tasks()->max('position') + 1,
+            'position' => $project->tasks()->max('position') + 1,
         ]);
 
         // イベントを発火（Listener が自動で動く）
@@ -81,13 +81,13 @@ class TaskController extends Controller
         $old = $task->getOriginal(); // 変更前の値を保持
 
         $validated = $request->validate([
-            'title'       => ['sometimes', 'string', 'max:255'],
+            'title' => ['sometimes', 'string', 'max:255'],
             'description' => ['sometimes', 'nullable', 'string'],
-            'status'      => ['sometimes', 'in:todo,in_progress,in_review,done'],
-            'priority'    => ['sometimes', 'in:low,medium,high,urgent'],
-            'due_date'    => ['sometimes', 'nullable', 'date'],
+            'status' => ['sometimes', 'in:todo,in_progress,in_review,done'],
+            'priority' => ['sometimes', 'in:low,medium,high,urgent'],
+            'due_date' => ['sometimes', 'nullable', 'date'],
             'assignee_id' => ['sometimes', 'nullable', 'exists:users,id'],
-            'position'    => ['sometimes', 'integer', 'min:0'],
+            'position' => ['sometimes', 'integer', 'min:0'],
         ]);
 
         $task->update($validated);
@@ -109,7 +109,6 @@ class TaskController extends Controller
         // Day 11：担当者が変更された場合に通知を送る
         if (isset($validated['assignee_id'])
             && $validated['assignee_id'] !== $old['assignee_id']
-            && $validated['assignee_id'] !== null
         ) {
             $assignee = User::query()->find($validated['assignee_id']);
 

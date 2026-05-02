@@ -23,10 +23,10 @@ class UpdateProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'color'       => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
-            'status'      => ['nullable', 'in:active,archived'],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'status' => ['nullable', 'in:active,archived'],
         ];
     }
 }

@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-namespace App\Models;
-
+use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Workspace extends Model
 {
-    /** @use HasFactory<\Database\Factories\WorkspaceFactory> */
+    /** @use HasFactory<WorkspaceFactory> */
     use HasFactory;
 
     // =============================
@@ -21,13 +20,21 @@ class Workspace extends Model
     // =============================
     protected $fillable = ['owner_id', 'name', 'slug', 'color'];
 
-    /** オーナーユーザー（多対1） */
+    /**
+     * オーナーユーザー（多対1）
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /** メンバー一覧（多対多）＋中間テーブルの role も取得 */
+    /**
+     * メンバー一覧（多対多）＋中間テーブルの role も取得
+     *
+     * @return BelongsToMany<User, $this>
+     */
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'workspace_user')
@@ -35,14 +42,18 @@ class Workspace extends Model
             ->withTimestamps();
     }
 
-    /** 招待一覧（1対多） */
+    /**
+     * 招待一覧（1対多）
+     *
+     * @return HasMany<WorkspaceInvitation, $this>
+     */
     public function invitations(): HasMany
     {
         return $this->hasMany(WorkspaceInvitation::class);
     }
 
     /**
-     * @return HasMany<Project, self>
+     * @return HasMany<Project, $this>
      */
     public function projects(): HasMany
     {
@@ -56,7 +67,7 @@ class Workspace extends Model
     /** 特定ユーザーが所属するワークスペースだけに絞る */
     public function scopeForUser($query, User $user)
     {
-        return $query->whereHas('members', function($query) use ($user) {
+        return $query->whereHas('members', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         });
     }
@@ -70,7 +81,7 @@ class Workspace extends Model
     {
         static::creating(function (Workspace $workspace) {
             if (empty($workspace->slug)) {
-                $workspace->slug = Str::slug($workspace->name) . '-' . Str::lower(Str::random(5));
+                $workspace->slug = Str::slug($workspace->name).'-'.Str::lower(Str::random(5));
             }
         });
     }

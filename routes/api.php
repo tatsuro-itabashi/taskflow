@@ -1,13 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\TaskController;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
-use App\Http\Controllers\Api\TaskController;
-use App\Http\Controllers\Api\ProjectController;
-use App\Http\Controllers\Api\NotificationController;
 
 // 認証確認エンドポイント
 Route::get('/user', function (Request $request) {
@@ -29,7 +28,7 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:api'])->group(functio
 // トークン発行
 Route::post('/tokens/create', function (Request $request) {
     $request->validate([
-        'email'    => 'required|email',
+        'email' => 'required|email',
         'password' => 'required',
     ]);
 

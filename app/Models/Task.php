@@ -20,16 +20,25 @@ class Task extends Model
         'due_date' => 'date',
     ];
 
+    /**
+     * @return BelongsTo<Project, $this>
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assignee_id');
     }
 
+    /**
+     * @return HasMany<Attachment, $this>
+     */
     public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class);

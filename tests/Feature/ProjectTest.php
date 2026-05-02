@@ -3,15 +3,15 @@
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Workspace;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Laravel\delete;
 use function Pest\Laravel\get;
-use function Pest\Laravel\post;
 use function Pest\Laravel\withoutVite;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
     withoutVite();
@@ -40,13 +40,13 @@ test('owner can view project list', function () {
 
     Project::factory(3)->create([
         'workspace_id' => $workspace->id,
-        'created_by'   => $owner->id,
+        'created_by' => $owner->id,
     ]);
 
     actingAs($owner)
         ->get(route('workspaces.projects.index', $workspace))
         ->assertStatus(200)
-        ->assertInertia(fn($page) => $page
+        ->assertInertia(fn ($page) => $page
             ->component('Projects/Index')
             ->has('projects', 3)  // projects に3件含まれるか
         );
@@ -77,16 +77,16 @@ test('owner can create a project', function () {
 
     actingAs($owner)
         ->post(route('workspaces.projects.store', $workspace), [
-            'name'  => 'テストプロジェクト',
+            'name' => 'テストプロジェクト',
             'color' => '#6366f1',
         ])
         ->assertRedirect();
 
     // DB に保存されているか確認
     assertDatabaseHas('projects', [
-        'name'         => 'テストプロジェクト',
+        'name' => 'テストプロジェクト',
         'workspace_id' => $workspace->id,
-        'created_by'   => $owner->id,
+        'created_by' => $owner->id,
     ]);
 });
 
@@ -133,7 +133,7 @@ test('owner can delete a project', function () {
     [$owner, $workspace] = setupWorkspace();
     $project = Project::factory()->create([
         'workspace_id' => $workspace->id,
-        'created_by'   => $owner->id,
+        'created_by' => $owner->id,
     ]);
 
     actingAs($owner)
@@ -151,7 +151,7 @@ test('member cannot delete a project', function () {
 
     $project = Project::factory()->create([
         'workspace_id' => $workspace->id,
-        'created_by'   => $owner->id,
+        'created_by' => $owner->id,
     ]);
 
     actingAs($member)

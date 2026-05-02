@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
-use App\Models\Workspace;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Models\Project;
+use App\Models\Workspace;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,7 +27,7 @@ class ProjectController extends Controller
 
         return Inertia::render('Projects/Index', [
             'workspace' => $workspace,
-            'projects'  => $projects,
+            'projects' => $projects,
         ]);
     }
 
@@ -71,8 +70,8 @@ class ProjectController extends Controller
 
         return Inertia::render('Projects/Show', [
             'project' => [
-                'id'           => $project->id,
-                'name'         => $project->name,
+                'id' => $project->id,
+                'name' => $project->name,
                 'workspace_id' => $project->workspace_id,
             ],
             'tasks' => $tasks,

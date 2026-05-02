@@ -29,19 +29,19 @@ class DashboardController extends Controller
                 function () use ($workspace) {
                     $projects = $workspace->projects()->withCount([
                         'tasks',
-                        'tasks as todo_count'        => fn($q) => $q->where('status', 'todo'),
-                        'tasks as in_progress_count' => fn($q) => $q->where('status', 'in_progress'),
-                        'tasks as done_count'        => fn($q) => $q->where('status', 'done'),
+                        'tasks as todo_count' => fn ($q) => $q->where('status', 'todo'),
+                        'tasks as in_progress_count' => fn ($q) => $q->where('status', 'in_progress'),
+                        'tasks as done_count' => fn ($q) => $q->where('status', 'done'),
                     ])->get();
 
                     return [
-                        'workspace_id'    => $workspace->id,
-                        'workspace_name'  => $workspace->name,
-                        'projects_count'  => $projects->count(),
-                        'total_tasks'     => $projects->sum('tasks_count'),
-                        'todo_count'      => $projects->sum('todo_count'),
+                        'workspace_id' => $workspace->id,
+                        'workspace_name' => $workspace->name,
+                        'projects_count' => $projects->count(),
+                        'total_tasks' => $projects->sum('tasks_count'),
+                        'todo_count' => $projects->sum('todo_count'),
                         'in_progress_count' => $projects->sum('in_progress_count'),
-                        'done_count'      => $projects->sum('done_count'),
+                        'done_count' => $projects->sum('done_count'),
                     ];
                 }
             );
@@ -59,17 +59,17 @@ class DashboardController extends Controller
                     ->take(10)
                     ->get()
                     ->map(fn ($log) => [
-                        'id'          => $log->id,
+                        'id' => $log->id,
                         'description' => $log->description, // accessor
-                        'user_name'   => $log->user->name,
-                        'action'      => $log->action,
-                        'created_at'  => $log->created_at->diffForHumans(),
+                        'user_name' => $log->user->name,
+                        'action' => $log->action,
+                        'created_at' => $log->created_at->diffForHumans(),
                     ]);
             }
         );
 
         return Inertia::render('Dashboard', [
-            'stats'          => $stats,
+            'stats' => $stats,
             'recentActivity' => $recentActivity,
         ]);
     }

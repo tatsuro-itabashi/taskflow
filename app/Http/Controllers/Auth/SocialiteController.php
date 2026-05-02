@@ -27,13 +27,13 @@ class SocialiteController extends Controller
         // 既存ユーザーの検索、なければ新規作成
         $user = User::updateOrCreate(
             [
-                'provider'    => $provider,
+                'provider' => $provider,
                 'provider_id' => $socialUser->getId(),
             ],
             [
-                'name'              => $socialUser->getName() ?? $socialUser->getNickname(),
-                'email'             => $socialUser->getEmail(),
-                'avatar'            => $socialUser->getAvatar(),
+                'name' => $socialUser->getName() ?? $socialUser->getNickname(),
+                'email' => $socialUser->getEmail(),
+                'avatar' => $socialUser->getAvatar(),
                 'email_verified_at' => now(), // OAuth ユーザーはメール確認済み扱い
             ]
         );

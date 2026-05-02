@@ -6,8 +6,6 @@ use App\Events\TaskCreated;
 use App\Events\TaskDeleted;
 use App\Events\TaskUpdated;
 use App\Models\ActivityLog;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class LogTaskActivity
 {
@@ -34,11 +32,11 @@ class LogTaskActivity
     {
         ActivityLog::create([
             'workspace_id' => $event->task->project->workspace_id,
-            'user_id'      => $event->createdBy->id,
+            'user_id' => $event->createdBy->id,
             'subject_type' => 'task',
-            'subject_id'   => $event->task->id,
-            'action'       => 'created',
-            'changes'      => null,
+            'subject_id' => $event->task->id,
+            'action' => 'created',
+            'changes' => null,
         ]);
     }
 
@@ -54,11 +52,11 @@ class LogTaskActivity
 
         ActivityLog::create([
             'workspace_id' => $event->task->project->workspace_id,
-            'user_id'      => $event->updatedBy->id,
+            'user_id' => $event->updatedBy->id,
             'subject_type' => 'task',
-            'subject_id'   => $event->task->id,
-            'action'       => 'updated',
-            'changes'      => $event->changes,
+            'subject_id' => $event->task->id,
+            'action' => 'updated',
+            'changes' => $event->changes,
         ]);
     }
 
@@ -69,11 +67,11 @@ class LogTaskActivity
     {
         ActivityLog::create([
             'workspace_id' => $event->task->project->workspace_id,
-            'user_id'      => $event->deletedBy->id,
+            'user_id' => $event->deletedBy->id,
             'subject_type' => 'task',
-            'subject_id'   => $event->task->id,
-            'action'       => 'deleted',
-            'changes'      => ['title' => $event->task->title],
+            'subject_id' => $event->task->id,
+            'action' => 'deleted',
+            'changes' => ['title' => $event->task->title],
         ]);
     }
 }

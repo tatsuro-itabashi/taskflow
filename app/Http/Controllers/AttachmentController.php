@@ -30,11 +30,11 @@ class AttachmentController extends Controller
         $path = $uploadedFile->store("attachments/task_{$task->id}", 'public');
 
         $task->attachments()->create([
-            'user_id'   => $request->user()->id,
-            'filename'  => $uploadedFile->getClientOriginalName(), // 元のファイル名
-            'path'      => $path,
+            'user_id' => $request->user()->id,
+            'filename' => $uploadedFile->getClientOriginalName(), // 元のファイル名
+            'path' => $path,
             'mime_type' => $uploadedFile->getMimeType(),
-            'size'      => $uploadedFile->getSize(),
+            'size' => $uploadedFile->getSize(),
         ]);
 
         return back()->with('success', 'ファイルを添付しました');

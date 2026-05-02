@@ -6,7 +6,6 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -46,13 +45,13 @@ class TaskStatusChanged implements ShouldBroadcast
     {
         return [
             'task' => [
-                'id'         => $this->task->id,
-                'title'      => $this->task->title,
-                'status'     => $this->task->status,
+                'id' => $this->task->id,
+                'title' => $this->task->title,
+                'status' => $this->task->status,
                 'old_status' => $this->oldStatus,
             ],
             'changed_by' => [
-                'id'   => $this->changedBy->id,
+                'id' => $this->changedBy->id,
                 'name' => $this->changedBy->name,
             ],
         ];

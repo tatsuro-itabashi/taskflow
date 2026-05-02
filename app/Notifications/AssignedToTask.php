@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -35,17 +34,16 @@ class AssignedToTask extends Notification
     /**
      * database チャンネル：notifications テーブルに保存する内容
      *
-     * @param object $notifiable
      * @return array<string, mixed>
      */
     public function toDatabase(object $notifiable): array
     {
         return [
-            'task_id'       => $this->task->id,
-            'task_title'    => $this->task->title,
-            'project_id'    => $this->task->project_id,
-            'assigned_by'   => [
-                'id'   => $this->assignedBy->id,
+            'task_id' => $this->task->id,
+            'task_title' => $this->task->title,
+            'project_id' => $this->task->project_id,
+            'assigned_by' => [
+                'id' => $this->assignedBy->id,
                 'name' => $this->assignedBy->name,
             ],
         ];

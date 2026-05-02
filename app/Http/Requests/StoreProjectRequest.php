@@ -24,9 +24,9 @@ class StoreProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
-            'color'       => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'color' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
         ];
     }
 
@@ -37,8 +37,8 @@ class StoreProjectRequest extends FormRequest
     {
         return [
             'name.required' => 'プロジェクト名は必須です',
-            'name.max'      => 'プロジェクト名は255文字以内にしてください',
-            'color.regex'   => 'カラーは #RRGGBB 形式で入力してください',
+            'name.max' => 'プロジェクト名は255文字以内にしてください',
+            'color.regex' => 'カラーは #RRGGBB 形式で入力してください',
         ];
     }
 }
